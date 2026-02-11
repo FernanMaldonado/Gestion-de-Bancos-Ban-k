@@ -5,8 +5,8 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { cordOptions } from './cors-configuration.js';
-import adminRoutes from '../src/admin/admin.routes.js';
 import { dbConnection } from './db.js';
+import loginRoutes from '../src/login/login.routes.js';
 
 const BASE_URL = '/Ban-k/v1';
 
@@ -20,7 +20,7 @@ const middlewares = (app) => {
 
 // Integración de rutas
 const routes = (app) => {
-    app.use(`${BASE_URL}/admins`, adminRoutes);
+    app.use(`${BASE_URL}/login`, loginRoutes);
 };
 
 // Iniciar servidor
