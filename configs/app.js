@@ -8,6 +8,7 @@ import { cordOptions } from './cors-configuration.js';
 import adminRoutes from '../src/admin/admin.routes.js';
 import { dbConnection } from './db.js';
 import loginRoutes from '../src/login/login.routes.js';
+import { createDefaultAdmin } from '../src/admin/admin.controller.js';
 
 const BASE_URL = '/Ban-k/v1';
 
@@ -33,7 +34,7 @@ const initServer = async (app) => {
 
     try {
         dbConnection();
-
+        await createDefaultAdmin();
         middlewares(app);
         routes(app);
 

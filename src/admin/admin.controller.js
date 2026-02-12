@@ -163,3 +163,32 @@ export const changeAdminStatus = async (req, res) => {
         });
     }
 };
+
+export const createDefaultAdmin = async () => {
+
+    try {
+
+        // Buscar si ya existe un admin
+        const adminExist = await Admin.findOne({ email: 'ADMIN01@gmail.com' });
+
+        if (adminExist) {
+            console.log('Admin por defecto ya existe');
+            return;
+        }
+
+        // Crear admin por defecto
+        const defaultAdmin = new Admin({
+            name: 'Administrador',
+            email: 'ADMIN01@gmail.com',
+            password: 'ADMIN01',
+            status: 'active'
+        });
+
+        await defaultAdmin.save();
+
+        console.log('Admin por defecto creado');
+
+    } catch (error) {
+        console.log('Error creando admin por defecto:', error);
+    }
+};
