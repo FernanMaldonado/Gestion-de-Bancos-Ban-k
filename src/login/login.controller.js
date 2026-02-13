@@ -1,10 +1,12 @@
 import jwt from 'jsonwebtoken';
+import Usuario from '../usuarios/usuarios.model.js';
 
 export const login = async (req, res) => {
     try {
-        const { username, password } = req.body;
+        const { name, password } = req.body;
 
-        const user = await User.findOne({ username });
+        // Buscar usuario por nombre
+        const user = await Usuario.findOne({ name });
 
         if (!user) {
             return res.status(404).json({
@@ -20,9 +22,8 @@ export const login = async (req, res) => {
             });
         }
 
-        const isMatch = await user.comparePassword(password);
-
-        if (!isMatch) {
+        // Comparación directa (porque tu modelo no usa bcrypt)
+        if (user.password !== password) {
             return res.status(401).json({
                 success: false,
                 message: 'Contraseña incorrecta',
@@ -41,11 +42,12 @@ export const login = async (req, res) => {
             data: {
                 user: {
                     id: user._id,
-                    username: user.username,
+                    name: user.name
                 },
                 token,
             },
         });
+
     } catch (error) {
         res.status(500).json({
             success: false,
