@@ -4,11 +4,13 @@ import mongoose, { mongo } from 'mongoose';
 
 const TransaccionesSchema = new mongoose.Schema({
     idFromUsuario: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
         required: true
     },
     idToUsuario: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
         required: true
     },
     amount: {
