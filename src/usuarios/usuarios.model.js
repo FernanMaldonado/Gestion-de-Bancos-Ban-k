@@ -1,6 +1,6 @@
 'user strict';
 
-import mongoose, { mongo } from 'mongoose';
+import mongoose, {mongo} from 'mongoose';
 
 const UsuarioSchema = new mongoose.Schema({
     name: {
@@ -39,7 +39,7 @@ const UsuarioSchema = new mongoose.Schema({
     },
     birthdate: {
         type: Date,
-        required: true
+        required: true 
     },
     createdAt: {
         type: Date,
