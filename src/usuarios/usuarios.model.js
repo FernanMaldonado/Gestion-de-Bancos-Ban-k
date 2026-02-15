@@ -51,5 +51,5 @@ const UsuarioSchema = new mongoose.Schema({
     },
 });
 
-UsuarioSchema.index({ isActive: 1})
+UsuarioSchema.index({ isActive: 1 })
 export default mongoose.model('Usuario', UsuarioSchema);
