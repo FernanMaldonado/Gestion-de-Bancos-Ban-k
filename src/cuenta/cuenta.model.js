@@ -54,9 +54,6 @@ const cuentasSchema = new mongoose.Schema({
         default: true,
     },
 })
-
-cuentasSchema.index({ documentoIdentidad: 1 }, { unique: true });
-cuentasSchema.index({ numeroCuenta: 1 }, { unique: true });
-cuentasSchema.index({ isActive: 1, nombreCompleto: 1 });
+cuentasSchema.index({ isActive: 1 });
 
 export default mongoose.model('Cuentas', cuentasSchema);
