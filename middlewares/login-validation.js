@@ -16,7 +16,7 @@ export const validateLogin = [
 
     checkValidators
 ];
-export const validateLogin = (req, res, next) => {
+export const validateLoginAdmin = (req, res, next) => {
     const { name, password } = req.body;
 
     const errors = [];
