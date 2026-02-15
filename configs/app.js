@@ -26,7 +26,7 @@ const middlewares = (app) => {
 // Integración de rutas
 const routes = (app) => {
 
-    app.use(`${BASE_URL}/login`, loginRoutes);
+    app.use(`${BASE_URL}/loginAdmin`, loginRoutes);
     app.use(`${BASE_URL}/admins`, adminRoutes);
     app.use(`${BASE_URL}/cuentas`, cuentaRoutes);
     app.use(`${BASE_URL}/transacciones`, transaccionRoutes);
