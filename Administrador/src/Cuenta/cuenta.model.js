@@ -3,32 +3,10 @@
 import mongoose from "mongoose";
 
 const cuentasSchema = new mongoose.Schema({
-    nombreCompleto: {
-        type: String,
-        required: [true, 'El nombre completo es obligatorio'],
-        required: true,
-        maxlength: [150, 'El nombre completo no puede tener mas 150 caracteres'],
-    },
-    documentoIdentidad: {
-        type: String,
-        required: [true, 'El documento de identidad es obligatorio'],
-        required: true,
-        unique: true,
-        trim: true,
-    },
-    telefono: {
-        type: String,
-        required: [true, 'El número de teléfono es obligatorio'],
-        required: true,
-        trim: true,
-        minlength: [8, 'El teléfono debe tener al menos 8 dígitos'],
-    },
-    correo: {
-        type: String,
-        required: true,
-        trim: true,
-        required: [true, 'El correo es obligatorio'],
-        unique: true,
+    usuarioId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Usuario',
+        required: true
     },
     tipoCuenta: {
         type: String,
@@ -38,8 +16,6 @@ const cuentasSchema = new mongoose.Schema({
     },
     numeroCuenta: {
         type: String,
-        required: [true, 'El número de cuenta es obligatorio'],
-        required: true,
         unique: true,
         trim: true,
     },
