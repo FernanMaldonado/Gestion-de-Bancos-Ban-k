@@ -1,25 +1,14 @@
-import {body} from 'express-validator';
+import {param} from 'express-validator';
 import { checkValidators } from './check-validators.js';
 
-export const validateTransaccion = [
-    body('idFromUsuario')
-        .notEmpty()
-        .withMessage('El id de la cuenta de origen es requerido')
-        .isMongoId()
-        .withMessage('El id de la cuenta de origen debe ser un id válido'),
-    body('idToUsuario')
-        .notEmpty()
-        .withMessage('El id de la cuenta de destino es requerido')
-        .isMongoId()
-        .withMessage('El id de la cuenta de destino debe ser un id válido'),
-    body('amount')
-        .notEmpty()
-        .withMessage('El monto es requerido')
-        .isNumeric()
-        .withMessage('El monto debe ser un número'),
-    body('description')
+export const validateGetTransacciones = [
+    param('year')
         .optional()
-        .isLength({ max: 255 })
-        .withMessage('La descripción no puede tener más de 255 caracteres'),
-    checkValidators,
+        .isInt({ min: 1900, max: new Date().getFullYear() })
+        .withMessage('Numero de año invalido.'),
+    param('month')
+        .optional()
+        .isInt({ min: 1, max: 12 })
+        .withMessage('El mes debe ser un número entero entre 1 y 12.'),
+    checkValidators
 ];

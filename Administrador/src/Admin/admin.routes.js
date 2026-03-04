@@ -26,6 +26,6 @@ router.post('/', validateCreateAdmin, createAdmin);
 // Rutas PUT
 router.put('/:id', validateUpdateAdmin, updateAdmin);
 router.put('/:id/activate', validateAdminStatusChange, changeAdminStatus);
-router.put('/:id/deactivate', validateAdminStatusChange, changeAdminStatus);
+router.put('/:id/desactivate', validateAdminStatusChange, changeAdminStatus);
 
 export default router;
