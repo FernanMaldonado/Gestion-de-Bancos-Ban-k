@@ -3,13 +3,15 @@
 import Transacciones from './transacciones.model.js';
 import Cuentas from '../cuenta/cuenta.model.js';
 
+/* =========================================
+   CREAR TRANSACCIÓN
+========================================= */
 export const crearTransaccion = async (req, res) => {
     try {
 
         const { numeroCuentaOrigen } = req.params;
         const { numeroCuentaDestino, amount, description, type } = req.body;
 
-        // 🔎 Validaciones básicas
         if (!numeroCuentaDestino || !amount) {
             return res.status(400).json({
                 success: false,
@@ -24,7 +26,6 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        // 🔎 Buscar cuentas
         const cuentaOrigen = await Cuentas.findOne({ numeroCuenta: numeroCuentaOrigen });
         const cuentaDestino = await Cuentas.findOne({ numeroCuenta: numeroCuentaDestino });
 
@@ -42,7 +43,6 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        // 🔐 Validar que la cuenta sea del usuario autenticado
         if (cuentaOrigen.usuario.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
@@ -71,14 +71,12 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        // 💸 Actualizar saldos
         cuentaOrigen.saldo -= amount;
         cuentaDestino.saldo += amount;
 
         await cuentaOrigen.save();
         await cuentaDestino.save();
 
-        // 📝 Guardar transacción con números de cuenta
         const nuevaTransaccion = new Transacciones({
             numeroCuentaOrigen,
             numeroCuentaDestino,
@@ -104,6 +102,10 @@ export const crearTransaccion = async (req, res) => {
     }
 };
 
+
+/* =========================================
+   OBTENER TODAS MIS TRANSACCIONES
+========================================= */
 export const obtenerMisTransacciones = async (req, res) => {
     try {
 
@@ -135,6 +137,138 @@ export const obtenerMisTransacciones = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Error al obtener transacciones'
+        });
+    }
+};
+
+
+/* =========================================
+   OBTENER TRANSACCIONES POR CUENTA (TODAS)
+========================================= */
+export const obtenerTransaccionesPorCuenta = async (req, res) => {
+    try {
+
+        const { numeroCuenta } = req.params;
+
+        const cuenta = await Cuentas.findOne({ numeroCuenta });
+
+        if (!cuenta) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cuenta no encontrada'
+            });
+        }
+
+        if (cuenta.usuario.toString() !== req.uid) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver estas transacciones'
+            });
+        }
+
+        const transacciones = await Transacciones.find({
+            $or: [
+                { numeroCuentaOrigen: numeroCuenta },
+                { numeroCuentaDestino: numeroCuenta }
+            ]
+        }).sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            transacciones
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener transacciones'
+        });
+    }
+};
+
+
+/* =========================================
+   🔵 TRANSACCIONES RECIBIDAS
+========================================= */
+export const obtenerTransaccionesRecibidas = async (req, res) => {
+    try {
+
+        const { numeroCuenta } = req.params;
+
+        const cuenta = await Cuentas.findOne({ numeroCuenta });
+
+        if (!cuenta) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cuenta no encontrada'
+            });
+        }
+
+        if (cuenta.usuario.toString() !== req.uid) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver estas transacciones'
+            });
+        }
+
+        const transacciones = await Transacciones.find({
+            numeroCuentaDestino: numeroCuenta
+        }).sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            transacciones
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener transacciones recibidas'
+        });
+    }
+};
+
+
+/* =========================================
+   🔴 TRANSACCIONES ENVIADAS
+========================================= */
+export const obtenerTransaccionesEnviadas = async (req, res) => {
+    try {
+
+        const { numeroCuenta } = req.params;
+
+        const cuenta = await Cuentas.findOne({ numeroCuenta });
+
+        if (!cuenta) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cuenta no encontrada'
+            });
+        }
+
+        if (cuenta.usuario.toString() !== req.uid) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver estas transacciones'
+            });
+        }
+
+        const transacciones = await Transacciones.find({
+            numeroCuentaOrigen: numeroCuenta
+        }).sort({ date: -1 });
+
+        return res.status(200).json({
+            success: true,
+            transacciones
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener transacciones enviadas'
         });
     }
 };
