@@ -22,5 +22,11 @@ const ProductosSchema = new mongoose.Schema({
     fecha_creacion: {
         type: Date,
         default: Date.now
+    },
+    isActive: {
+        type: Boolean,
+        default: true
     }
 });
+
+export default mongoose.model('Productos', ProductosSchema);

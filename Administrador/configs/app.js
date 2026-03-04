@@ -11,6 +11,7 @@ import transaccionRoutes from '../src/transacciones/transacciones.routes.js';
 import usuariosRoutes from '../src/usuarios/usuarios.routes.js'
 import { dbConnection } from './db.js';
 import { createDefaultAdmin } from '../src/admin/admin.controller.js';
+import depositosRoutes from '../src/Depositos/depositos.routes.js';
 
 const BASE_URL = '/Ban-k/v1/admin';
 
@@ -29,6 +30,7 @@ const routes = (app) => {
     app.use(`${BASE_URL}/cuentas`, cuentaRoutes);
     app.use(`${BASE_URL}/transacciones`, transaccionRoutes);
     app.use(`${BASE_URL}/usuarios`, usuariosRoutes);
+    app.use(`${BASE_URL}/depositos`, depositosRoutes);
 };
 
 // Iniciar servidor
