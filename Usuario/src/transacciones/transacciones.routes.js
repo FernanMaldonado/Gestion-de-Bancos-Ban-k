@@ -4,7 +4,7 @@ import { crearTransaccion, obtenerMisTransacciones } from './transacciones.contr
 
 const router = Router();
 
-router.post('/transferir', validateJWT, crearTransaccion);
+router.post('/transferir/:numeroCuentaOrigen', validateJWT, crearTransaccion);
 router.get('/mis-transacciones', validateJWT, obtenerMisTransacciones);
 
 export default router;
