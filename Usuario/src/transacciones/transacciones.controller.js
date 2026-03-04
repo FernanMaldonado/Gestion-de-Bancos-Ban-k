@@ -24,8 +24,9 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        // 🔎 Buscar cuenta origen por número
+        // 🔎 Buscar cuentas
         const cuentaOrigen = await Cuentas.findOne({ numeroCuenta: numeroCuentaOrigen });
+        const cuentaDestino = await Cuentas.findOne({ numeroCuenta: numeroCuentaDestino });
 
         if (!cuentaOrigen) {
             return res.status(404).json({
@@ -34,24 +35,6 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        // 🔐 Validar que la cuenta pertenezca al usuario del token
-        if (cuentaOrigen.usuario.toString() !== req.uid) {
-            return res.status(403).json({
-                success: false,
-                message: 'No tienes permiso para usar esta cuenta'
-            });
-        }
-
-        if (!cuentaOrigen.isActive) {
-            return res.status(400).json({
-                success: false,
-                message: 'La cuenta origen está inactiva'
-            });
-        }
-
-        // 🔎 Buscar cuenta destino
-        const cuentaDestino = await Cuentas.findOne({ numeroCuenta: numeroCuentaDestino });
-
         if (!cuentaDestino) {
             return res.status(404).json({
                 success: false,
@@ -59,22 +42,28 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        if (!cuentaDestino.isActive) {
-            return res.status(400).json({
+        // 🔐 Validar que la cuenta sea del usuario autenticado
+        if (cuentaOrigen.usuario.toString() !== req.uid) {
+            return res.status(403).json({
                 success: false,
-                message: 'La cuenta destino está inactiva'
+                message: 'No tienes permiso para usar esta cuenta'
             });
         }
 
-        // ❌ Evitar transferencia a la misma cuenta
-        if (cuentaOrigen._id.toString() === cuentaDestino._id.toString()) {
+        if (!cuentaOrigen.isActive || !cuentaDestino.isActive) {
+            return res.status(400).json({
+                success: false,
+                message: 'Una de las cuentas está inactiva'
+            });
+        }
+
+        if (numeroCuentaOrigen === numeroCuentaDestino) {
             return res.status(400).json({
                 success: false,
                 message: 'No puedes transferirte a la misma cuenta'
             });
         }
 
-        // 💰 Validar saldo
         if (cuentaOrigen.saldo < amount) {
             return res.status(400).json({
                 success: false,
@@ -89,13 +78,13 @@ export const crearTransaccion = async (req, res) => {
         await cuentaOrigen.save();
         await cuentaDestino.save();
 
-        // 📝 Crear registro de transacción
+        // 📝 Guardar transacción con números de cuenta
         const nuevaTransaccion = new Transacciones({
-            idFromUsuario: cuentaOrigen._id,
-            idToUsuario: cuentaDestino._id,
+            numeroCuentaOrigen,
+            numeroCuentaDestino,
             amount,
-            description: description || 'Sin descripción',
-            type: type || 'transferencia'
+            type: type || 'transferencia',
+            description: description || 'sin descripción'
         });
 
         await nuevaTransaccion.save();
@@ -103,7 +92,7 @@ export const crearTransaccion = async (req, res) => {
         return res.status(201).json({
             success: true,
             message: 'Transferencia realizada correctamente',
-            transaccion: nuevaTransaccion
+            data: nuevaTransaccion
         });
 
     } catch (error) {
@@ -114,7 +103,6 @@ export const crearTransaccion = async (req, res) => {
         });
     }
 };
-
 
 export const obtenerMisTransacciones = async (req, res) => {
     try {
@@ -128,17 +116,14 @@ export const obtenerMisTransacciones = async (req, res) => {
             });
         }
 
-        const cuentasIds = cuentasUsuario.map(c => c._id);
+        const numerosCuenta = cuentasUsuario.map(c => c.numeroCuenta);
 
         const transacciones = await Transacciones.find({
             $or: [
-                { idFromUsuario: { $in: cuentasIds } },
-                { idToUsuario: { $in: cuentasIds } }
+                { numeroCuentaOrigen: { $in: numerosCuenta } },
+                { numeroCuentaDestino: { $in: numerosCuenta } }
             ]
-        })
-            .populate('idFromUsuario', 'numeroCuenta nombreCompleto')
-            .populate('idToUsuario', 'numeroCuenta nombreCompleto')
-            .sort({ createdAt: -1 });
+        }).sort({ date: -1 });
 
         return res.status(200).json({
             success: true,
