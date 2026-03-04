@@ -13,13 +13,6 @@ export const validateCreateCuenta = [
     .isLength({ min: 3, max: 50 })
     .withMessage('El tipo de cuenta debe tener entre 3 y 50 caracteres'),
 
-  body('numeroCuenta')
-    .trim()
-    .notEmpty()
-    .withMessage('El número de cuenta es requerido')
-    .isLength({ min: 5, max: 30 })
-    .withMessage('El número de cuenta debe tener entre 5 y 30 caracteres'),
-
   body('saldo')
     .notEmpty()
     .withMessage('El saldo es requerido')

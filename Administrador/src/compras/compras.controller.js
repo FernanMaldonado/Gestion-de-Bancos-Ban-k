@@ -1,69 +1,80 @@
-import mongoose from 'mongoose';
-import Retiro from './retiros.model.js';
+'use strict';
 
-// Listar retiros totales con paginación
-export const getRetiros = async (req, res) => {
+import mongoose from 'mongoose';
+import Compras from './compras.model.js';
+
+// Obtener todas las compras con paginación de 10 items por página
+export const getCompras = async (req, res) => {
     try {
         const { limite = 10, desde = 0 } = req.query;
+        const query = { isActive: true };
 
-        const [total, retiros] = await Promise.all([
-            Retiro.countDocuments(),
-            Retiro.find()
-                .populate('cuentaId', 'numeroCuenta tipoCuenta')
+        const [total, compras] = await Promise.all([
+            Compras.countDocuments(query),
+            Compras.find(query)
+                .populate('producto', 'nombre')
+                .populate('cuenta', 'numeroCuenta')
                 .skip(Number(desde))
                 .limit(Number(limite))
-                .sort({ date: -1 })
         ]);
 
         return res.status(200).json({
             success: true,
             total,
-            retiros
+            compras
         });
     } catch (err) {
         return res.status(500).json({
             success: false,
-            message: 'Error al obtener los retiros',
+            message: 'Error al obtener las compras',
             error: err.message
         });
     }
 };
 
-// Obtener retiros hechos en un año y mes
-export const getRetirosByYearAndMonth = async (req, res) => {
+// Obtener compras por año y mes en un mismo método
+export const getComprasByYearAndMonth = async (req, res) => {
     try {
         const { year, month } = req.params;
+
+        if (!year || !month) {
+            return res.status(400).json({
+                success: false,
+                message: 'El año y el mes son requeridos'
+            });
+        }
 
         const startDate = new Date(year, month - 1, 1);
         const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
         const query = {
-            date: {
+            isActive: true,
+            fechaSolicitud: {
                 $gte: startDate,
                 $lte: endDate
             }
         };
 
-        const retiros = await Retiro.find(query)
-            .populate('cuentaId', 'numeroCuenta tipoCuenta')
-            .sort({ date: -1 });
+        const compras = await Compras.find(query)
+            .populate('producto', 'nombre')
+            .populate('cuenta', 'numeroCuenta');
 
         return res.status(200).json({
             success: true,
-            total: retiros.length,
-            retiros
+            total: compras.length,
+            compras
         });
     } catch (err) {
         return res.status(500).json({
             success: false,
-            message: 'Error al obtener los retiros por fecha',
+            message: 'Error al obtener las compras por fecha',
             error: err.message
         });
     }
 };
 
-// Obtener retiros hechos por una cuenta
-export const getRetirosByCuenta = async (req, res) => {
+// Obtener las compras hechas por una cuenta
+export const getComprasByCuenta = async (req, res) => {
     try {
         const { numeroCuenta } = req.params;
 
@@ -78,22 +89,23 @@ export const getRetirosByCuenta = async (req, res) => {
         }
 
         const query = {
-            cuentaId: cuenta._id
+            cuenta: cuenta._id,
+            isActive: true
         };
 
-        const retiros = await Retiro.find(query)
-            .populate('cuentaId', 'numeroCuenta tipoCuenta')
-            .sort({ date: -1 });
+        const compras = await Compras.find(query)
+            .populate('producto', 'nombre')
+            .populate('cuenta', 'numeroCuenta');
 
         return res.status(200).json({
             success: true,
-            total: retiros.length,
-            retiros
+            total: compras.length,
+            compras
         });
     } catch (err) {
         return res.status(500).json({
             success: false,
-            message: 'Error al obtener los retiros de la cuenta',
+            message: 'Error al obtener las compras de la cuenta',
             error: err.message
         });
     }

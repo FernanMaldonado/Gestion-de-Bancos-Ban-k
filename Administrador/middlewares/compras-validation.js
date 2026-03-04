@@ -1,8 +1,14 @@
 import { param } from 'express-validator';
 import { checkValidators } from './check-validators.js';
 
-// Validar ID de cuenta para obtener depósitos
-export const validateGetDepositosByCuenta = [
+export const validateCompraId = [
+    param('id')
+        .isMongoId()
+        .withMessage('El ID de la compra proporcionado no es un ObjectId válido'),
+    checkValidators
+];
+
+export const validateGetComprasByNumeroCuenta = [
     param('numeroCuenta')
         .isString()
         .withMessage('El número de cuenta debe ser un texto')

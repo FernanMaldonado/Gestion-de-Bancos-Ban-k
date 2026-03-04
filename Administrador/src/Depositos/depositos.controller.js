@@ -1,5 +1,6 @@
 'use strict';
 
+import mongoose from 'mongoose';
 import Depositos from './depositos.model.js';
 
 // Obtener todos los depósitos
@@ -35,18 +36,26 @@ export const getDepositos = async (req, res) => {
 };
 
 // Obtener depósitos por idcuenta
-export const getDepositoByCuentaId = async (req, res) => {
+export const getDepositosByCuenta = async (req, res) => {
   try {
-    const { cuentaId } = req.params;
+    const { numeroCuenta } = req.params;
     const { page = 1, limit = 10 } = req.query;
 
-    const depositos = await Depositos.find({ cuentaId })
+    const cuenta = await mongoose.model('Cuentas').findOne({ numeroCuenta });
+    if (!cuenta) {
+      return res.status(404).json({
+        success: false,
+        message: `No se encontró la cuenta con el número ${numeroCuenta}`
+      });
+    }
+
+    const depositos = await Depositos.find({ cuentaId: cuenta._id })
       .populate('cuentaId')
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ date: -1 });
 
-    const total = await Depositos.countDocuments({ cuentaId });
+    const total = await Depositos.countDocuments({ cuentaId: cuenta._id });
 
     if (!depositos || depositos.length === 0) {
       return res.status(404).json({

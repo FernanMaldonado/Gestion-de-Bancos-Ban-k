@@ -1,4 +1,4 @@
-import Productos from './productos.model.js';
+import Producto from './productos.model.js';
 
 // Obtener todos los productos con paginación y filtro por estado
 export const getProductos = async (req, res) => {
@@ -6,12 +6,12 @@ export const getProductos = async (req, res) => {
     const { page = 1, limit = 10, isActive = true } = req.query;
     const filter = { isActive };
 
-    const productos = await Productos.find(filter)
+    const productos = await Producto.find(filter)
       .limit(limit * 1)
       .skip((page - 1) * limit)
       .sort({ fecha_creacion: -1 });
 
-    const total = await Productos.countDocuments(filter);
+    const total = await Producto.countDocuments(filter);
 
     return res.status(200).json({
       success: true,
@@ -37,7 +37,7 @@ export const getProductoById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const producto = await Productos.findById(id);
+    const producto = await Producto.findById(id);
 
     if (!producto) {
       return res.status(404).json({
@@ -63,7 +63,7 @@ export const getProductoById = async (req, res) => {
 export const createProducto = async (req, res) => {
   try {
     const productoData = req.body;
-    const producto = new Productos(productoData);
+    const producto = new Producto(productoData);
     await producto.save();
 
     return res.status(201).json({
@@ -86,7 +86,7 @@ export const updateProducto = async (req, res) => {
     const { id } = req.params;
     const updateData = { ...req.body };
 
-    const producto = await Productos.findByIdAndUpdate(id, updateData, {
+    const producto = await Producto.findByIdAndUpdate(id, updateData, {
       new: true,
       runValidators: true,
     });
@@ -119,7 +119,7 @@ export const changeProductoStatus = async (req, res) => {
     const isActive = req.url.includes('/activar');
     const action = isActive ? 'activado' : 'desactivado';
 
-    const producto = await Productos.findByIdAndUpdate(
+    const producto = await Producto.findByIdAndUpdate(
       id,
       { isActive },
       { new: true }

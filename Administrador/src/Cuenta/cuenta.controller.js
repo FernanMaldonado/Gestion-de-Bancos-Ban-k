@@ -94,7 +94,7 @@ export const getCuentaByUsuarioId = async (req, res) => {
       success: true,
       data: { cuentas, usuario: usuario.name },
     });
-  } catch(error) {
+  } catch (error) {
     res.status(500).json({
       success: false,
       message: 'Error al obtener la cuenta',
@@ -107,6 +107,9 @@ export const getCuentaByUsuarioId = async (req, res) => {
 export const createCuenta = async (req, res) => {
   try {
     const cuentaData = req.body;
+
+    // Generar un número de cuenta único y aleatorio de 10 a 12 dígitos
+    cuentaData.numeroCuenta = Math.floor(1000000000 + Math.random() * 9000000000).toString();
 
     const cuenta = new Cuentas(cuentaData);
     await cuenta.save();

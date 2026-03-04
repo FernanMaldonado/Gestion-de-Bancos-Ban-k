@@ -8,6 +8,11 @@ import {
   updateProducto,
   changeProductoStatus,
 } from './productos.controller.js';
+import {
+  validateProductoId,
+  validateCreateProducto,
+  validateUpdateProducto
+} from '../../middlewares/productos-validation.js';
 
 const router = express.Router();
 
@@ -15,16 +20,16 @@ const router = express.Router();
 router.get('/', getProductos);
 
 // Obtener producto por ID
-router.get('/:id', getProductoById);
+router.get('/:id', validateProductoId, getProductoById);
 
 // Crear producto
-router.post('/', createProducto);
+router.post('/', validateCreateProducto, createProducto);
 
 // Actualizar producto
-router.put('/:id', updateProducto);
+router.put('/:id', validateUpdateProducto, updateProducto);
 
 // Activar / desactivar producto
-router.put('/activar/:id', changeProductoStatus);
-router.put('/desactivar/:id', changeProductoStatus);
+router.put('/activar/:id', validateProductoId, changeProductoStatus);
+router.put('/desactivar/:id', validateProductoId, changeProductoStatus);
 
 export default router;

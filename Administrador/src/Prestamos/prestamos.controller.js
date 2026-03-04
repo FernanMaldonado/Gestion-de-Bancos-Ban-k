@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Prestamos from './prestamos.model.js';
 
 // Listar todos los préstamos
@@ -90,9 +91,18 @@ export const getPrestamoById = async (req, res) => {
 // Obtener préstamos por id de cuenta
 export const getPrestamosByCuenta = async (req, res) => {
   try {
-    const { cuentaId } = req.params;
+    const { numeroCuenta } = req.params;
     const { page = 1, limit = 10 } = req.query;
-    const filter = { cuentaId };
+
+    const cuenta = await mongoose.model('Cuentas').findOne({ numeroCuenta });
+    if (!cuenta) {
+      return res.status(404).json({
+        success: false,
+        message: `No se encontró la cuenta con el número ${numeroCuenta}`
+      });
+    }
+
+    const filter = { cuentaId: cuenta._id };
 
     const prestamos = await Prestamos.find(filter)
       .populate('cuentaId', 'numeroCuenta tipoCuenta')

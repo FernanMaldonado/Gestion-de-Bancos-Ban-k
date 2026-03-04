@@ -1,6 +1,6 @@
 'use strict';
 
-import mongoose, {mongo} from 'mongoose';
+import mongoose, { mongo } from 'mongoose';
 
 const ProductosSchema = new mongoose.Schema({
     nombre: {
@@ -29,4 +29,4 @@ const ProductosSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model('Productos', ProductosSchema);
+export default mongoose.model('Producto', ProductosSchema);

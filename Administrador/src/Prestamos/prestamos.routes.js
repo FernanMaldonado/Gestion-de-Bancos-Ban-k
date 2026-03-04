@@ -6,6 +6,10 @@ import {
     getPrestamosByCuenta,
     changePrestamoStatus,
 } from './prestamos.controller.js';
+import {
+    validatePrestamoId,
+    validatePrestamosByCuenta
+} from '../../middlewares/prestamos-validation.js';
 
 const router = Router();
 
@@ -16,13 +20,13 @@ router.get('/', getPrestamos);
 router.get('/pendientes', getPrestamosPendientes);
 
 // obtener por id
-router.get('/:id', getPrestamoById);
+router.get('/:id', validatePrestamoId, getPrestamoById);
 
-// obtener por id de cuenta
-router.get('/cuenta/:cuentaId', getPrestamosByCuenta);
+// obtener por numero de cuenta
+router.get('/cuenta/:numeroCuenta', validatePrestamosByCuenta, getPrestamosByCuenta);
 
 // aprobar o rechazar préstamo
-router.put('/:id/aprobar', changePrestamoStatus);
-router.put('/:id/denegar', changePrestamoStatus);
+router.put('/:id/aprobar', validatePrestamoId, changePrestamoStatus);
+router.put('/:id/denegar', validatePrestamoId, changePrestamoStatus);
 
 export default router;

@@ -1,4 +1,3 @@
-import Cuentas from "../cuenta/cuenta.model.js";
 import Transacciones from "./transacciones.model.js";
 
 export const getTransacciones = async (req, res) => {
@@ -12,7 +11,7 @@ export const getTransacciones = async (req, res) => {
 
         const transacciones = await Transacciones.find()
             .limit(limit * 1)
-            .skip((page-1)*limit)
+            .skip((page - 1) * limit)
             .sort(options.sort);
 
         const total = await Transacciones.countDocuments();
@@ -28,7 +27,7 @@ export const getTransacciones = async (req, res) => {
                 limit,
             },
         });
-    } catch ( error ) {
+    } catch (error) {
         res.status(500).json({
             success: false,
             message: 'Error al obtener las transacciones',
