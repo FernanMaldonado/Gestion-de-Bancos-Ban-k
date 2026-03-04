@@ -1,8 +1,13 @@
 'use strict';
 
-import mongoose, {mongo} from 'mongoose';
+import mongoose from 'mongoose';
 
 const DepositoSchema = new mongoose.Schema({
+    cuentaId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
+        required: true
+    },
     amount: {
         type: Number,
         required: true

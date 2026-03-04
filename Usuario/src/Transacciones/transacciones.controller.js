@@ -1,4 +1,4 @@
-import Cuentas from "../Cuenta/cuenta.model.js";
+import Cuentas from "./Cuenta/cuenta.model.js";
 import Transacciones from "./transacciones.model.js";
 
 export const getTransacciones = async (req, res) => {
