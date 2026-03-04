@@ -5,12 +5,12 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { cordOptions } from './cors-configuration.js';
-import adminRoutes from '../src/Admin/admin.routes.js';
+import adminRoutes from '../src/admin/admin.routes.js';
 import cuentaRoutes from '../src/cuenta/cuenta.routes.js';
 import transaccionRoutes from '../src/transacciones/transacciones.routes.js';
 import usuariosRoutes from '../src/usuarios/usuarios.routes.js'
 import { dbConnection } from './db.js';
-import loginRoutes from '../src/login/login.routes.js';
+import { createDefaultAdmin } from '../src/admin/admin.controller.js';
 
 const BASE_URL = '/Ban-k/v1/admin';
 

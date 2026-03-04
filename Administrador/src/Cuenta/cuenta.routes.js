@@ -5,6 +5,7 @@ import {
     createCuenta,
     updateCuenta,
     changeCuentaStatus,
+    getCuentaByUsuarioId,
 } from './cuenta.controller.js';
 import {
     validateCreateCuenta,
@@ -18,6 +19,7 @@ const router = Router();
 // Rutas GET
 router.get('/', getCuentas);
 router.get('/:id', validateGetCuentaById, getCuentaById);
+router.get('/usuario/:usuarioId', getCuentaByUsuarioId); // Nueva ruta para obtener cuenta por id de usuario
 
 // rutas POST
 router.post(

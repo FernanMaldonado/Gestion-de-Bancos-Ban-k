@@ -1,4 +1,5 @@
 import Cuentas from './cuenta.model.js';
+import Usuarios from '../usuarios/usuarios.model.js';
 
 // Obtener todas las cuentas con paginación y filtros
 export const getCuentas = async (req, res) => {
@@ -45,6 +46,7 @@ export const getCuentaById = async (req, res) => {
     const { id } = req.params;
 
     const cuenta = await Cuentas.findById(id);
+    const usuario = await Usuarios.findById(cuenta.usuarioId);
 
     if (!cuenta) {
       return res.status(404).json({
@@ -55,7 +57,7 @@ export const getCuentaById = async (req, res) => {
 
     res.status(200).json({
       success: true,
-      data: cuenta,
+      data: { cuenta, usuario: usuario.name },
     });
   } catch (error) {
     res.status(500).json({
@@ -65,6 +67,41 @@ export const getCuentaById = async (req, res) => {
     });
   }
 };
+
+// Obtener una cuenta por id de usuario
+export const getCuentaByUsuarioId = async (req, res) => {
+  try {
+    const { usuarioId } = req.params;
+    const usuario = await Usuarios.findById(usuarioId);
+    if (!usuario) {
+      return res.status(404).json({
+        success: false,
+        message: 'Usuario no encontrado',
+      });
+    }
+
+    const cuentas = await Cuentas.find({ usuarioId: usuario._id });
+
+    if (!cuentas || cuentas.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'No se encontraron cuentas para el usuario',
+        data: [],
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: { cuentas, usuario: usuario.name },
+    });
+  } catch(error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error al obtener la cuenta',
+      error: error.message,
+    });
+  }
+}
 
 // Crear nueva cuenta
 export const createCuenta = async (req, res) => {

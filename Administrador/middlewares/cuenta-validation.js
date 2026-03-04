@@ -3,34 +3,9 @@ import { checkValidators } from './check-validators.js';
 
 // Validaciones para crear cuentas
 export const validateCreateCuenta = [
-  body('nombreCompleto')
-    .trim()
-    .notEmpty()
-    .withMessage('El nombre completo es requerido')
-    .isLength({ min: 2, max: 150 })
-    .withMessage('El nombre completo debe tener entre 2 y 150 caracteres'),
-
-  body('documentoIdentidad')
-    .trim()
-    .notEmpty()
-    .withMessage('El documento de identidad es requerido')
-    .isLength({ min: 5, max: 20 })
-    .withMessage('El documento de identidad debe tener entre 5 y 20 caracteres'),
-
-  body('telefono')
-    .trim()
-    .notEmpty()
-    .withMessage('El teléfono es requerido')
-    .isLength({ min: 8, max: 15 })
-    .withMessage('El teléfono debe tener entre 8 y 15 caracteres'),
-
-  body('correo')
-    .trim()
-    .notEmpty()
-    .withMessage('El correo es requerido')
-    .isEmail()
-    .withMessage('Correo inválido'),
-
+  body('usuarioId')
+    .isMongoId()
+    .withMessage('ID de usuario no válido'),
   body('tipoCuenta')
     .trim()
     .notEmpty()
