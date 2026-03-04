@@ -1,8 +1,13 @@
 'use strict';
 
-import mongoose, {mongo} from "mongoose";
+import mongoose from "mongoose";
 
 const PrestamosSchema = new mongoose.Schema({
+    cuentaId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
+        required: true
+    },
     cantidad_prestada: {
         type: Number,
         required: true
@@ -10,10 +15,6 @@ const PrestamosSchema = new mongoose.Schema({
     cantidad_pendiente: {
         type: Number,
         default: 0
-    },
-    numero_cuenta: {
-        type: String,
-        required: true
     },
     tasa_interes: {
         type: Number,
