@@ -1,16 +1,8 @@
 import { body, param } from 'express-validator';
 import { checkValidators } from './check-validators.js';
 
-
-// ✅ Crear cuenta
+// Validaciones para crear cuentas
 export const validateCreateCuenta = [
-
-  body('usuario')
-    .notEmpty()
-    .withMessage('El usuario es requerido')
-    .isMongoId()
-    .withMessage('Debe ser un ObjectId válido'),
-
   body('nombreCompleto')
     .trim()
     .notEmpty()
@@ -54,17 +46,16 @@ export const validateCreateCuenta = [
     .withMessage('El número de cuenta debe tener entre 5 y 30 caracteres'),
 
   body('saldo')
-    .optional()
+    .notEmpty()
+    .withMessage('El saldo es requerido')
     .isNumeric()
     .withMessage('El saldo debe ser un número'),
 
   checkValidators,
 ];
 
-
-// ✅ Actualizar cuenta
+// Validaciones para actualizar cuentas
 export const validateUpdateCuentaRequest = [
-
   param('id')
     .isMongoId()
     .withMessage('ID debe ser un ObjectId válido de MongoDB'),
@@ -113,8 +104,7 @@ export const validateUpdateCuentaRequest = [
   checkValidators,
 ];
 
-
-// ✅ Activar / Desactivar
+// Validación para activar/desactivar cuentas
 export const validateCuentaStatusChange = [
   param('id')
     .isMongoId()
@@ -122,8 +112,7 @@ export const validateCuentaStatusChange = [
   checkValidators,
 ];
 
-
-// ✅ Obtener por ID
+// Validación para obtener cuenta por ID
 export const validateGetCuentaById = [
   param('id')
     .isMongoId()
