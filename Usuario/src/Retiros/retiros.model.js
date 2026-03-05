@@ -1,6 +1,6 @@
 'use strict';
 
-import mongoose, { mongo } from 'mongoose';
+import mongoose, {mongo} from 'mongoose';
 
 const RetirosSchema = new mongoose.Schema({
     cuentaId: {
