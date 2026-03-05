@@ -1,7 +1,7 @@
 'use strict';
 
 import Compras from './compra.model.js';
-import Cuentas from '../cuenta/cuenta.model.js';
+import Cuentas from '../Cuenta/cuenta.model.js';
 import Producto from '../Productos/productos.model.js';
 
 export const crearCompra = async (req, res) => {
@@ -41,7 +41,7 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para usar esta cuenta'
@@ -138,7 +138,7 @@ export const crearCompra = async (req, res) => {
 export const obtenerMisCompras = async (req, res) => {
     try {
 
-        const cuentasUsuario = await Cuentas.find({ usuario: req.uid });
+        const cuentasUsuario = await Cuentas.find({ usuarioId: req.uid });
 
         if (!cuentasUsuario.length) {
             return res.status(404).json({
@@ -188,7 +188,7 @@ export const obtenerComprasPorCuenta = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para ver las compras de esta cuenta'

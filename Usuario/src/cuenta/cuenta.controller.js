@@ -7,7 +7,7 @@ export const getMisCuentas = async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
 
         const filter = {
-            usuario: req.uid,
+            usuarioId: req.uid,
             isActive: true
         };
 
@@ -72,7 +72,7 @@ export const createCuenta = async (req, res) => {
 
         // 1️⃣ Validación: verificar si el usuario ya tiene este tipo de cuenta
         const cuentaExistente = await Cuentas.findOne({
-            usuario: usuario,
+            usuarioId: usuario,
             tipoCuenta: tipoCuenta.toUpperCase() // asegurar mayúsculas
         });
 
@@ -86,6 +86,7 @@ export const createCuenta = async (req, res) => {
         // 3️⃣ Crear la cuenta
         const cuentaData = {
             ...req.body,
+            usuarioId: usuario,
             tipoCuenta: tipoCuenta.toUpperCase()
         };
 

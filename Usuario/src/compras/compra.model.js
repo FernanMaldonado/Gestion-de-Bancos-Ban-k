@@ -5,7 +5,7 @@ import mongoose from "mongoose";
 const comprasSchema = new mongoose.Schema({
     producto: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Productos',
+        ref: 'Producto',
         required: true
     },
     cuenta: {

@@ -1,7 +1,7 @@
 'use strict';
 import mongoose from 'mongoose';
 import Prestamos from './prestamos.model.js';
-import Cuentas from '../cuenta/cuenta.model.js';
+import Cuentas from '../Cuenta/cuenta.model.js';
 
 export const crearPrestamo = async (req, res) => {
     try {
@@ -22,7 +22,7 @@ export const crearPrestamo = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para usar esta cuenta'
@@ -62,7 +62,7 @@ export const crearPrestamo = async (req, res) => {
 
 export const obtenerPrestamosUsuario = async (req, res) => {
     try {
-        const cuentas = await Cuentas.find({ usuario: req.uid });
+        const cuentas = await Cuentas.find({ usuarioId: req.uid });
         if (!cuentas.length) {
             return res.status(404).json({
                 success: false,

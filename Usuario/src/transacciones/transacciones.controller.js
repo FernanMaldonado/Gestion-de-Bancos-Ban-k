@@ -1,7 +1,7 @@
 'use strict';
 
 import Transacciones from './transacciones.model.js';
-import Cuentas from '../cuenta/cuenta.model.js';
+import Cuentas from '../Cuenta/cuenta.model.js';
 
 /* =========================================
    CREAR TRANSACCIÓN
@@ -43,7 +43,7 @@ export const crearTransaccion = async (req, res) => {
             });
         }
 
-        if (cuentaOrigen.usuario.toString() !== req.uid) {
+        if (cuentaOrigen.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para usar esta cuenta'
@@ -78,8 +78,8 @@ export const crearTransaccion = async (req, res) => {
         await cuentaDestino.save();
 
         const nuevaTransaccion = new Transacciones({
-            numeroCuentaOrigen,
-            numeroCuentaDestino,
+            idFromUsuario: cuentaOrigen._id,
+            idToUsuario: cuentaDestino._id,
             amount,
             type: type || 'transferencia',
             description: description || 'sin descripción'
@@ -109,7 +109,7 @@ export const crearTransaccion = async (req, res) => {
 export const obtenerMisTransacciones = async (req, res) => {
     try {
 
-        const cuentasUsuario = await Cuentas.find({ usuario: req.uid });
+        const cuentasUsuario = await Cuentas.find({ usuarioId: req.uid });
 
         if (!cuentasUsuario.length) {
             return res.status(404).json({
@@ -118,12 +118,12 @@ export const obtenerMisTransacciones = async (req, res) => {
             });
         }
 
-        const numerosCuenta = cuentasUsuario.map(c => c.numeroCuenta);
+        const idsCuenta = cuentasUsuario.map(c => c._id);
 
         const transacciones = await Transacciones.find({
             $or: [
-                { numeroCuentaOrigen: { $in: numerosCuenta } },
-                { numeroCuentaDestino: { $in: numerosCuenta } }
+                { idFromUsuario: { $in: idsCuenta } },
+                { idToUsuario: { $in: idsCuenta } }
             ]
         }).sort({ date: -1 });
 
@@ -159,7 +159,7 @@ export const obtenerTransaccionesPorCuenta = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para ver estas transacciones'
@@ -168,8 +168,8 @@ export const obtenerTransaccionesPorCuenta = async (req, res) => {
 
         const transacciones = await Transacciones.find({
             $or: [
-                { numeroCuentaOrigen: numeroCuenta },
-                { numeroCuentaDestino: numeroCuenta }
+                { idFromUsuario: cuenta._id },
+                { idToUsuario: cuenta._id }
             ]
         }).sort({ date: -1 });
 
@@ -205,7 +205,7 @@ export const obtenerTransaccionesRecibidas = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para ver estas transacciones'
@@ -213,7 +213,7 @@ export const obtenerTransaccionesRecibidas = async (req, res) => {
         }
 
         const transacciones = await Transacciones.find({
-            numeroCuentaDestino: numeroCuenta
+            idToUsuario: cuenta._id
         }).sort({ date: -1 });
 
         return res.status(200).json({
@@ -248,7 +248,7 @@ export const obtenerTransaccionesEnviadas = async (req, res) => {
             });
         }
 
-        if (cuenta.usuario.toString() !== req.uid) {
+        if (cuenta.usuarioId.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
                 message: 'No tienes permiso para ver estas transacciones'
@@ -256,7 +256,7 @@ export const obtenerTransaccionesEnviadas = async (req, res) => {
         }
 
         const transacciones = await Transacciones.find({
-            numeroCuentaOrigen: numeroCuenta
+            idFromUsuario: cuenta._id
         }).sort({ date: -1 });
 
         return res.status(200).json({

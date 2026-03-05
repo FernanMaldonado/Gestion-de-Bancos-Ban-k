@@ -2,7 +2,7 @@
 
 import mongoose from 'mongoose';
 import Depositos from './depositos.model.js';
-import Cuentas from '../cuenta/cuenta.model.js';
+import Cuentas from '../Cuenta/cuenta.model.js';
 
 // Obtener todos los depósitos de un usuario (todas sus cuentas)
 export const getMisDepositos = async (req, res) => {
