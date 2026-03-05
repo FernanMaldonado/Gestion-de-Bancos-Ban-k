@@ -12,7 +12,7 @@ export const getMisDepositos = async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
 
         // Obtener todas las cuentas del usuario
-        const cuentasUsuario = await Cuentas.find({ usuario: req.uid });
+        const cuentasUsuario = await Cuentas.find({ usuarioId: req.uid });
         if (!cuentasUsuario.length) {
             return res.status(404).json({
                 success: false,
@@ -61,7 +61,10 @@ export const getMisDepositosPorCuenta = async (req, res) => {
         const { page = 1, limit = 10 } = req.query;
 
         // Buscar la cuenta y verificar que pertenezca al usuario
-        const cuenta = await Cuentas.findOne({ numeroCuenta, usuario: req.uid });
+        const cuenta = await Cuentas.findOne({
+            numeroCuenta,
+            usuarioId: req.uid
+        });
         if (!cuenta) {
             return res.status(404).json({
                 success: false,
@@ -121,9 +124,12 @@ export const crearDeposito = async (req, res) => {
                 message: 'El monto debe ser un número mayor a 0'
             });
         }
-
         // Verificar que la cuenta de origen pertenezca al usuario
-        const cuenta = await Cuentas.findOne({ _id: cuentaId, usuario: req.uid });
+        const cuenta = await Cuentas.findOne({
+            _id: cuentaId,
+            usuarioId: req.uid
+        });
+
         if (!cuenta) {
             return res.status(404).json({
                 success: false,
