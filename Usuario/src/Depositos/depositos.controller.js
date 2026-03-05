@@ -2,9 +2,11 @@
 
 import mongoose from 'mongoose';
 import Depositos from './depositos.model.js';
-import Cuentas from '../Cuenta/cuenta.model.js';
+import Cuentas from '../cuenta/cuenta.model.js'; // tu modelo de cuentas se llama "Cuenta"
 
-// Obtener todos los depósitos de un usuario (todas sus cuentas)
+// ======================================================
+// OBTENER TODOS LOS DEPÓSITOS DE UN USUARIO (TODAS SUS CUENTAS)
+// ======================================================
 export const getMisDepositos = async (req, res) => {
     try {
         const { page = 1, limit = 10 } = req.query;
@@ -23,28 +25,20 @@ export const getMisDepositos = async (req, res) => {
         // Buscar todos los depósitos desde esas cuentas
         const depositos = await Depositos.find({ cuentaId: { $in: cuentasIds } })
             .populate('cuentaId', 'numeroCuenta tipoCuenta usuario')
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
+            .limit(Number(limit))
+            .skip((Number(page) - 1) * Number(limit))
             .sort({ date: -1 });
 
         const total = await Depositos.countDocuments({ cuentaId: { $in: cuentasIds } });
-
-        if (!depositos.length) {
-            return res.status(404).json({
-                success: false,
-                message: 'No se encontraron depósitos asociados a tus cuentas',
-                data: [],
-            });
-        }
 
         res.status(200).json({
             success: true,
             data: depositos,
             pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
+                currentPage: Number(page),
+                totalPages: Math.ceil(total / Number(limit)),
                 totalRecords: total,
-                limit,
+                limit: Number(limit),
             },
         });
 
@@ -58,6 +52,9 @@ export const getMisDepositos = async (req, res) => {
     }
 };
 
+// ======================================================
+// OBTENER DEPÓSITOS DE UNA CUENTA ESPECÍFICA
+// ======================================================
 export const getMisDepositosPorCuenta = async (req, res) => {
     try {
         const { numeroCuenta } = req.params;
@@ -75,29 +72,21 @@ export const getMisDepositosPorCuenta = async (req, res) => {
         // Buscar depósitos realizados desde esa cuenta
         const depositos = await Depositos.find({ cuentaId: cuenta._id })
             .populate('cuentaId', 'numeroCuenta tipoCuenta usuario')
-            .limit(limit * 1)
-            .skip((page - 1) * limit)
+            .limit(Number(limit))
+            .skip((Number(page) - 1) * Number(limit))
             .sort({ date: -1 });
 
         const total = await Depositos.countDocuments({ cuentaId: cuenta._id });
-
-        if (!depositos.length) {
-            return res.status(404).json({
-                success: false,
-                message: 'No se encontraron depósitos para esta cuenta',
-                data: [],
-            });
-        }
 
         res.status(200).json({
             success: true,
             message: `Depósitos de la cuenta ${numeroCuenta} obtenidos correctamente`,
             data: depositos,
             pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
+                currentPage: Number(page),
+                totalPages: Math.ceil(total / Number(limit)),
                 totalRecords: total,
-                limit,
+                limit: Number(limit),
             },
         });
 
@@ -111,6 +100,9 @@ export const getMisDepositosPorCuenta = async (req, res) => {
     }
 };
 
+// ======================================================
+// CREAR UN DEPÓSITO
+// ======================================================
 export const crearDeposito = async (req, res) => {
     try {
         const { cuentaId, account_number, amount } = req.body;
@@ -139,7 +131,7 @@ export const crearDeposito = async (req, res) => {
             });
         }
 
-        // Opcional: puedes verificar que la cuenta destino exista
+        // Verificar que la cuenta destino exista
         const cuentaDestino = await Cuentas.findOne({ numeroCuenta: account_number });
         if (!cuentaDestino) {
             return res.status(404).json({
@@ -148,7 +140,7 @@ export const crearDeposito = async (req, res) => {
             });
         }
 
-        // Validar saldo
+        // Validar saldo suficiente
         if (cuenta.saldo < amount) {
             return res.status(400).json({
                 success: false,
@@ -157,20 +149,20 @@ export const crearDeposito = async (req, res) => {
         }
 
         // Restar del saldo de la cuenta origen
-        cuenta.saldo -= amount;
+        cuenta.saldo -= Number(amount);
         await cuenta.save();
 
         // Crear el depósito
         const deposito = new Depositos({
             cuentaId: cuenta._id,
             account_number,
-            amount
+            amount: Number(amount)
         });
 
         await deposito.save();
 
-        // Opcional: agregar saldo a la cuenta destino
-        cuentaDestino.saldo += amount;
+        // Agregar saldo a la cuenta destino
+        cuentaDestino.saldo += Number(amount);
         await cuentaDestino.save();
 
         res.status(201).json({

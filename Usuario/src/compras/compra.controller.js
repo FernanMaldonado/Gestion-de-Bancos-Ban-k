@@ -1,7 +1,7 @@
 'use strict';
 
 import Compras from './compra.model.js';
-import Cuentas from '../Cuenta/cuenta.model.js';
+import Cuentas from '../cuenta/cuenta.model.js';
 import Producto from '../Productos/productos.model.js';
 
 export const crearCompra = async (req, res) => {

@@ -1,7 +1,7 @@
 'use strict';
-
+import mongoose from 'mongoose';
 import Transacciones from './transacciones.model.js';
-import Cuentas from '../Cuenta/cuenta.model.js';
+import Cuentas from '../cuenta/cuenta.model.js';
 
 /* =========================================
    CREAR TRANSACCIÓN

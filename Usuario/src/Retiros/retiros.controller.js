@@ -1,7 +1,9 @@
-import mongoose from 'mongoose';
-import Retiro from './retiros.model.js';
+'use strict';
 
-// Listar retiros totales con paginación
+import Retiro from './retiros.model.js';
+import Cuentas from '../cuenta/cuenta.model.js';
+
+// Listar todos los retiros con paginación
 export const getRetiros = async (req, res) => {
     try {
         const { limite = 10, desde = 0 } = req.query;
@@ -29,7 +31,7 @@ export const getRetiros = async (req, res) => {
     }
 };
 
-// Obtener retiros hechos en un año y mes
+// Obtener retiros de un año y mes específicos
 export const getRetirosByYearAndMonth = async (req, res) => {
     try {
         const { year, month } = req.params;
@@ -38,10 +40,7 @@ export const getRetirosByYearAndMonth = async (req, res) => {
         const endDate = new Date(year, month, 0, 23, 59, 59, 999);
 
         const query = {
-            date: {
-                $gte: startDate,
-                $lte: endDate
-            }
+            date: { $gte: startDate, $lte: endDate }
         };
 
         const retiros = await Retiro.find(query)
@@ -62,13 +61,13 @@ export const getRetirosByYearAndMonth = async (req, res) => {
     }
 };
 
-// Obtener retiros hechos por una cuenta
+// Obtener retiros de una cuenta específica
 export const getRetirosByCuenta = async (req, res) => {
     try {
         const { numeroCuenta } = req.params;
 
-        // Primero buscar la cuenta por el número de cuenta
-        const cuenta = await mongoose.model('Cuentas').findOne({ numeroCuenta });
+        // Buscar la cuenta usando el modelo importado
+        const cuenta = await Cuentas.findOne({ numeroCuenta });
 
         if (!cuenta) {
             return res.status(404).json({
@@ -77,11 +76,7 @@ export const getRetirosByCuenta = async (req, res) => {
             });
         }
 
-        const query = {
-            cuentaId: cuenta._id
-        };
-
-        const retiros = await Retiro.find(query)
+        const retiros = await Retiro.find({ cuentaId: cuenta._id })
             .populate('cuentaId', 'numeroCuenta tipoCuenta')
             .sort({ date: -1 });
 
@@ -118,8 +113,8 @@ export const crearRetiro = async (req, res) => {
             });
         }
 
-        // Buscar la cuenta
-        const cuenta = await mongoose.model('Cuentas').findById(cuentaId);
+        // Buscar la cuenta usando el modelo importado
+        const cuenta = await Cuentas.findById(cuentaId);
 
         if (!cuenta) {
             return res.status(404).json({

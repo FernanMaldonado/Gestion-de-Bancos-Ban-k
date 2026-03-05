@@ -5,7 +5,7 @@ import mongoose, { mongo } from 'mongoose';
 const RetirosSchema = new mongoose.Schema({
     cuentaId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cuentas',
+        ref: 'Cuenta',
         required: true
     },
     amount: {

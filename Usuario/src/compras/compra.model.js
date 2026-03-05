@@ -10,7 +10,7 @@ const comprasSchema = new mongoose.Schema({
     },
     cuenta: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cuentas',
+        ref: 'Cuenta',
         required: true
     },
 

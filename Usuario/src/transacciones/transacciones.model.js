@@ -1,41 +1,34 @@
 'use strict';
-
 import mongoose from 'mongoose';
 
 const TransaccionesSchema = new mongoose.Schema({
-
-    numeroCuentaOrigen: {
-        type: String,
+    idFromUsuario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
         required: true
     },
-
-    numeroCuentaDestino: {
-        type: String,
+    idToUsuario: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cuentas',
         required: true
     },
-
     amount: {
         type: Number,
         required: true
     },
-
     date: {
         type: Date,
         default: Date.now
     },
-
     type: {
         type: String,
         enum: ['transferencia', 'pago', 'recarga'],
-        default: 'transferencia',
-        required: true
+        default: 'transferencia'
     },
-
     description: {
         type: String,
         default: 'sin descripción'
     }
-
 });
 
 export default mongoose.model('Transacciones', TransaccionesSchema);
