@@ -5,18 +5,19 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import { cordOptions } from './cors-configuration.js';
+import { dbConnection } from './db.js';
+import { createDefaultAdmin } from '../src/admin/admin.controller.js';
+import adminRoutes from '../src/admin/admin.routes.js';
 import cuentaRoutes from '../src/cuenta/cuenta.routes.js';
 import transaccionRoutes from '../src/transacciones/transacciones.routes.js';
 import usuariosRoutes from '../src/usuarios/usuarios.routes.js'
-import comprasRoutes from '../src/compras/compra.routes.js';
-import { dbConnection } from './db.js';
-import loginRoutes from '../src/login/login.routes.js';
-import productosRoutes from '../src/Productos/productos.routes.js';
-import prestamosRoutes from '../src/Prestamos/prestamos.routes.js';
-import depositosRoutes from '../src/Depositos/depositos.routes.js';
-import retirosRoutes from '../src/Retiros/retiros.routes.js';
+import depositosRoutes from '../src/depositos/depositos.routes.js';
+import comprasRoutes from '../src/compras/compras.routes.js';
+import retirosRoutes from '../src/retiros/retiros.routes.js';
+import prestamosRoutes from '../src/prestamos/prestamos.routes.js';
+import productosRoutes from '../src/productos/productos.routes.js';
 
-const BASE_URL = '/Ban-k/v1/usuario';
+const BASE_URL = '/Ban-k/v1/admin';
 
 // Configuración de middlewares
 const middlewares = (app) => {
@@ -29,16 +30,15 @@ const middlewares = (app) => {
 // Integración de rutas
 const routes = (app) => {
 
-    app.use(`${BASE_URL}/loginAdmin`, loginRoutes);
+    app.use(`${BASE_URL}/admins`, adminRoutes);
     app.use(`${BASE_URL}/cuentas`, cuentaRoutes);
     app.use(`${BASE_URL}/transacciones`, transaccionRoutes);
-    app.use(`${BASE_URL}/login`, loginRoutes);
     app.use(`${BASE_URL}/usuarios`, usuariosRoutes);
-    app.use(`${BASE_URL}/compras`, comprasRoutes);
-    app.use(`${BASE_URL}/productos`, productosRoutes);
-    app.use(`${BASE_URL}/prestamos`, prestamosRoutes);
     app.use(`${BASE_URL}/depositos`, depositosRoutes);
+    app.use(`${BASE_URL}/compras`, comprasRoutes);
     app.use(`${BASE_URL}/retiros`, retirosRoutes);
+    app.use(`${BASE_URL}/prestamos`, prestamosRoutes);
+    app.use(`${BASE_URL}/productos`, productosRoutes);
 };
 
 // Iniciar servidor
@@ -49,6 +49,7 @@ const initServer = async (app) => {
 
     try {
         dbConnection();
+        await createDefaultAdmin();
         middlewares(app);
         routes(app);
 
@@ -60,7 +61,7 @@ const initServer = async (app) => {
         app.get(`${BASE_URL}/health`, (req, res) => {
             res.status(200).json({
                 status: 'ok',
-                service: 'Ban-k User',
+                service: 'Ban-k Admin',
                 version: '1.0.0'
             });
         });
@@ -71,4 +72,3 @@ const initServer = async (app) => {
 }
 
 export { initServer };
-
