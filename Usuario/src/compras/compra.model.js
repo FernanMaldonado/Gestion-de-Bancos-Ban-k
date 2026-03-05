@@ -3,17 +3,16 @@
 import mongoose from "mongoose";
 
 const comprasSchema = new mongoose.Schema({
+    producto: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Producto',
+        required: [true, 'El producto es obligatorio']
+    },
 
     cuenta: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cuentas',
         required: [true, 'La cuenta es obligatoria']
-    },
-
-    producto: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Producto',
-        required: [true, 'El producto es obligatorio']
     },
 
     descripcion: {
@@ -58,9 +57,10 @@ const comprasSchema = new mongoose.Schema({
     }
 });
 
-// Índices
+// Índice para producto
 comprasSchema.index({ producto: 1 });
-comprasSchema.index({ cuenta: 1 });
+
+// Índice para estado activo
 comprasSchema.index({ isActive: 1 });
 
 export default mongoose.model('Compras', comprasSchema);

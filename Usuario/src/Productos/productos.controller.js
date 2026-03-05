@@ -58,3 +58,24 @@ export const getProductoById = async (req, res) => {
         });
     }
 };
+
+// Crear nuevo producto
+export const createProducto = async (req, res) => {
+    try {
+        const productoData = req.body;
+        const producto = new Productos(productoData);
+        await producto.save();
+
+        return res.status(201).json({
+            success: true,
+            message: 'Producto creado exitosamente',
+            data: producto,
+        });
+    } catch (error) {
+        return res.status(400).json({
+            success: false,
+            message: 'Error al crear el producto',
+            error: error.message,
+        });
+    }
+};

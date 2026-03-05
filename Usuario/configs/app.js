@@ -8,8 +8,10 @@ import { cordOptions } from './cors-configuration.js';
 import cuentaRoutes from '../src/cuenta/cuenta.routes.js';
 import transaccionRoutes from '../src/transacciones/transacciones.routes.js';
 import usuariosRoutes from '../src/usuarios/usuarios.routes.js'
+import comprasRoutes from '../src/compras/compra.routes.js';
 import { dbConnection } from './db.js';
 import loginRoutes from '../src/login/login.routes.js';
+import productosRoutes from '../src/Productos/productos.routes.js';
 
 const BASE_URL = '/Ban-k/v1/usuario';
 
@@ -29,6 +31,8 @@ const routes = (app) => {
     app.use(`${BASE_URL}/transacciones`, transaccionRoutes);
     app.use(`${BASE_URL}/login`, loginRoutes);
     app.use(`${BASE_URL}/usuarios`, usuariosRoutes);
+    app.use(`${BASE_URL}/compras`, comprasRoutes);
+    app.use(`${BASE_URL}/productos`, productosRoutes);
 };
 
 // Iniciar servidor
