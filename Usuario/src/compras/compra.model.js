@@ -5,14 +5,13 @@ import mongoose from "mongoose";
 const comprasSchema = new mongoose.Schema({
     producto: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Producto',
-        required: [true, 'El producto es obligatorio']
+        ref: 'Productos',
+        required: true
     },
-
     cuenta: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cuentas',
-        required: [true, 'La cuenta es obligatoria']
+        required: true
     },
 
     descripcion: {

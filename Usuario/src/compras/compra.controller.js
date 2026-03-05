@@ -4,15 +4,11 @@ import Compras from './compra.model.js';
 import Cuentas from '../cuenta/cuenta.model.js';
 import Producto from '../Productos/productos.model.js';
 
-/* =========================================
-   CREAR COMPRA
-========================================= */
 export const crearCompra = async (req, res) => {
     try {
 
         const { numeroCuenta, producto, cantidad, precioMejor } = req.body;
 
-        // 🔎 Validaciones básicas
         if (!numeroCuenta || !producto || !cantidad) {
             return res.status(400).json({
                 success: false,
@@ -36,7 +32,6 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        // 🔎 Buscar cuenta por número de cuenta
         const cuenta = await Cuentas.findOne({ numeroCuenta });
 
         if (!cuenta) {
@@ -46,7 +41,6 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        // 🔐 Validar que la cuenta pertenezca al usuario autenticado
         if (cuenta.usuario.toString() !== req.uid) {
             return res.status(403).json({
                 success: false,
@@ -61,7 +55,6 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        // 🔎 Verificar producto
         const productoDB = await Producto.findById(producto);
 
         if (!productoDB) {
@@ -78,7 +71,7 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        // 💰 Calcular precios
+        // Calcular precios
         const precioNormal = productoDB.precio;
         let precioFinal;
 
@@ -105,7 +98,6 @@ export const crearCompra = async (req, res) => {
 
         const total = cantidadNumero * precioFinal;
 
-        // 💸 Validar saldo
         if (cuenta.saldo < total) {
             return res.status(400).json({
                 success: false,
@@ -113,11 +105,9 @@ export const crearCompra = async (req, res) => {
             });
         }
 
-        // 🔻 Descontar saldo
         cuenta.saldo -= total;
         await cuenta.save();
 
-        // 📝 Crear compra
         const nuevaCompra = new Compras({
             cuenta: cuenta._id,
             producto: productoDB._id,
@@ -145,9 +135,6 @@ export const crearCompra = async (req, res) => {
     }
 };
 
-/* =========================================
-   OBTENER MIS COMPRAS
-========================================= */
 export const obtenerMisCompras = async (req, res) => {
     try {
 
@@ -177,6 +164,52 @@ export const obtenerMisCompras = async (req, res) => {
         return res.status(500).json({
             success: false,
             message: 'Error al obtener compras'
+        });
+    }
+};
+
+export const obtenerComprasPorCuenta = async (req, res) => {
+    try {
+        const { numeroCuenta } = req.params;
+
+        if (!numeroCuenta) {
+            return res.status(400).json({
+                success: false,
+                message: 'El número de cuenta es obligatorio'
+            });
+        }
+
+        const cuenta = await Cuentas.findOne({ numeroCuenta });
+
+        if (!cuenta) {
+            return res.status(404).json({
+                success: false,
+                message: 'Cuenta no encontrada'
+            });
+        }
+
+        if (cuenta.usuario.toString() !== req.uid) {
+            return res.status(403).json({
+                success: false,
+                message: 'No tienes permiso para ver las compras de esta cuenta'
+            });
+        }
+
+        const compras = await Compras.find({ cuenta: cuenta._id })
+            .populate('producto', 'nombre precio')
+            .populate('cuenta', 'numeroCuenta')
+            .sort({ fechaSolicitud: -1 });
+
+        return res.status(200).json({
+            success: true,
+            compras
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            success: false,
+            message: 'Error al obtener compras por cuenta'
         });
     }
 };

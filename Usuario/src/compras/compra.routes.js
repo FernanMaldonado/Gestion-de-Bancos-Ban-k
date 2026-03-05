@@ -3,7 +3,8 @@ import { validateJWT } from '../../middlewares/validate-jwt.js';
 
 import {
     crearCompra,
-    obtenerMisCompras
+    obtenerMisCompras,
+    obtenerComprasPorCuenta
 } from './compra.controller.js';
 
 import {
@@ -29,6 +30,12 @@ router.get(
     '/mis-compras',
     validateJWT,
     obtenerMisCompras
+);
+
+router.get(
+    '/mis-compras/:numeroCuenta',
+    validateJWT,
+    obtenerComprasPorCuenta
 );
 
 export default router;
