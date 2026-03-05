@@ -13,6 +13,7 @@ import { dbConnection } from './db.js';
 import loginRoutes from '../src/login/login.routes.js';
 import productosRoutes from '../src/Productos/productos.routes.js';
 import prestamosRoutes from '../src/Prestamos/prestamos.routes.js';
+import depositosRoutes from '../src/Depositos/depositos.routes.js';
 
 const BASE_URL = '/Ban-k/v1/usuario';
 
@@ -35,6 +36,7 @@ const routes = (app) => {
     app.use(`${BASE_URL}/compras`, comprasRoutes);
     app.use(`${BASE_URL}/productos`, productosRoutes);
     app.use(`${BASE_URL}/prestamos`, prestamosRoutes);
+    app.use(`${BASE_URL}/depositos`, depositosRoutes);
 };
 
 // Iniciar servidor
