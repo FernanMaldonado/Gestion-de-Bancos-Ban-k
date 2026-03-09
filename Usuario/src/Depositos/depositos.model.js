@@ -5,7 +5,7 @@ import mongoose from 'mongoose';
 const DepositoSchema = new mongoose.Schema({
     cuentaId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Cuentas',
+        ref: 'Cuenta',
         required: true
     },
     amount: {

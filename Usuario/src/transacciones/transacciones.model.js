@@ -1,14 +1,13 @@
 'use strict';
-
-import mongoose, { mongo } from 'mongoose';
+import mongoose from 'mongoose';
 
 const TransaccionesSchema = new mongoose.Schema({
-    idFromAccount: {
+    idFromUsuario: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cuentas',
         required: true
     },
-    idToAccount: {
+    idToUsuario: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Cuentas',
         required: true
@@ -24,12 +23,10 @@ const TransaccionesSchema = new mongoose.Schema({
     type: {
         type: String,
         enum: ['transferencia', 'pago', 'recarga'],
-        default: 'transferencia',
-        required: true
+        default: 'transferencia'
     },
     description: {
         type: String,
-        required: false,
         default: 'sin descripción'
     }
 });

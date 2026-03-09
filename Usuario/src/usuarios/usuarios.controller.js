@@ -1,36 +1,27 @@
 import Usuario from './usuarios.model.js'
 
-export const getUsuarios = async (req, res) => {
-    try{
-        const {page = 1, limit = 10, isActive = true} = req.query;
-        const filter = {isActive}
-        const options = {
-            page: parseInt(page),
-            limit: parseInt(limit),
-        };
-        
-        const usuarios = await Usuario.find(filter)
-        .limit(limit * 1)
-        .skip((page - 1)*limit)
-        .sort({createdAt: -1});
-        
-        const total = await Usuario.countDocuments(filter);
+export const getUsuarioLogueado = async (req, res) => {
+    try {
+
+        const usuario = await Usuario.findById(req.uid);
+
+        if (!usuario || !usuario.isActive) {
+            return res.status(404).json({
+                success: false,
+                message: 'Usuario no encontrado o inactivo'
+            });
+        }
+
         res.status(200).json({
             success: true,
-            data: usuarios,
-            pagination: {
-                currentPage: page,
-                totalPages: Math.ceil(total / limit),
-                totalRecords: total,
-                limit,
-            },
+            data: usuario
         });
-    }
-    catch (error){
+
+    } catch (error) {
         res.status(500).json({
             success: false,
-            message: 'Error al obtener los campos',
-            error: error.message,
+            message: 'Error al obtener el usuario logueado',
+            error: error.message
         });
     }
 };
@@ -61,7 +52,7 @@ export const getUsuarioById = async (req, res) => {
 };
 
 export const createUsuario = async (req, res) => {
-    try{
+    try {
 
         const usuarioData = req.body;
 
@@ -74,7 +65,7 @@ export const createUsuario = async (req, res) => {
             data: usuario,
         });
     }
-    catch (error){
+    catch (error) {
         res.status(500).json({
             success: false,
             message: 'No se pudo agregar el usuario',

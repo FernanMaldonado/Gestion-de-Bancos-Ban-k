@@ -32,4 +32,6 @@ const cuentasSchema = new mongoose.Schema({
 })
 cuentasSchema.index({ isActive: 1 });
 
-export default mongoose.model('Cuentas', cuentasSchema);
+const Cuenta = mongoose.models.Cuenta || mongoose.model('Cuenta', cuentasSchema);
+
+export default Cuenta;

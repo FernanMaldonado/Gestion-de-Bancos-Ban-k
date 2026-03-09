@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { createUsuario, getUsuarios, getUsuarioById, updateUsuario, deleteUsuario } from './usuarios.controller.js';
+import { createUsuario, getUsuarioLogueado, getUsuarioById, updateUsuario, deleteUsuario } from './usuarios.controller.js';
 import { validateCreateUsuario, validateUpdateUsuario, validateUsuarioId } from '../../middlewares/usuario-validation.js';
+import { validateJWT } from "../../middlewares/validate-jwt.js";
 
 const router = Router();
 
-// Metodo para obtener los usuarios
-router.get('/', getUsuarios);
+router.get('/me', validateJWT, getUsuarioLogueado);
 
 router.get('/:id', validateUsuarioId, getUsuarioById);
 
